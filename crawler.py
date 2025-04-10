@@ -63,6 +63,13 @@ def get_valid_background_color(driver, el):
         el = driver.execute_script("return arguments[0].parentElement;", el)
     return "rgb(255, 255, 255)"  # 기본 배경
 
+def has_text_child(el):
+    children = el.find_elements(By.XPATH, "./*")
+    for child in children:
+        if child.text.strip():
+            return True
+    return False
+
 # 기준 설정
 min_contrast = 4.5
 min_font_size_px = 12
@@ -85,7 +92,9 @@ for idx, el in enumerate(elements):
 
         if not has_content:
             continue  # 텍스트도 아이콘도 없으면 스킵
-
+        
+        if has_text_child(el):
+            continue  # 자식이 텍스트 가지면 이건 상위 요소니까 스킵
         # 스타일 추출
         style = driver.execute_script("""
             const computed = window.getComputedStyle(arguments[0]);
