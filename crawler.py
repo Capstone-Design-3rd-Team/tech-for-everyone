@@ -69,6 +69,7 @@ def has_text_child(el):
         if child.text.strip():
             return True
     return False
+
 #버튼 기준설정
 def is_button_like(el):
     tag_name = el.tag_name.lower()
@@ -78,6 +79,7 @@ def is_button_like(el):
         role == "button" or
         el.get_attribute("onclick") is not None
     )
+
 # 기준 설정
 min_contrast = 4.5
 min_font_size_px = 12
@@ -100,40 +102,56 @@ for idx, el in enumerate(elements):
         has_icon = bool(el.find_elements(By.TAG_NAME, 'svg') or el.find_elements(By.TAG_NAME, 'img'))
         has_content = has_text or (is_button and has_icon)
 
-        if not has_content:
-            continue  # 텍스트도 아이콘도 없으면 스킵
+        if not has_content and not is_button_like(el):
+            continue  # 텍스트도 아이콘도 없고 버튼도 아니면 스킵
 
+        # 자식에 텍스트가 있어도, 버튼이면 포함 (중복 허용)
         if has_text_child(el) and not is_button_like(el):
-            continue  # 진짜 상위일 때만 스킵!
+            continue  # 진짜 상위만 스킵 (버튼 아닌 경우만)
 
-        # 스타일 추출
+                # 스타일 + 가시성 한 번에 추출
         style = driver.execute_script("""
-            const computed = window.getComputedStyle(arguments[0]);
+            const el = arguments[0];
+            const computed = window.getComputedStyle(el);
+            const rect = el.getBoundingClientRect();
             return {
                 fontSize: computed.fontSize,
                 color: computed.color,
-                backgroundColor: computed.backgroundColor
+                backgroundColor: computed.backgroundColor,
+                display: computed.display,
+                visibility: computed.visibility,
+                opacity: parseFloat(computed.opacity),
+                width: rect.width,
+                height: rect.height
             };
         """, el)
+
+        # 가시성 체크 //안보이거나 0*0 인요소들 배제
+        if (
+            style['display'] == 'none' or
+            style['visibility'] == 'hidden' or
+            style['opacity'] == 0 or
+            style['width'] == 0 or
+            style['height'] == 0
+        ):
+            continue  # 안 보이면 스킵!
 
         font_size = style['fontSize']
         color = style['color']
         bg_color = style['backgroundColor']
 
-        # 투명한 배경이면 상위 배경색 추적
+        # 배경이 투명하면 상위 배경색 추적
         if "rgba" in bg_color and bg_color.endswith(", 0)") or "transparent" in bg_color:
             bg_color = get_valid_background_color(driver, el)
 
-               # 요소 크기 측정
-        size = el.size
-        width = size['width']
-        height = size['height']
+        width = style['width']
+        height = style['height']
 
-        # 그룹화 키 생성 (기존에는 스타일만 묶었지만, 크기는 제외)
         key = (font_size, color, bg_color)
         style_groups[key].append((el, idx, text, is_button, has_icon, width, height))
 
 
+    #웹 페이지의 구조가 변경되었는데도, 예전 요소에 계속 접근하려 할 때 생기는 오류 staleElement
     except StaleElementReferenceException:
         print(f"❌ [{idx}] stale element로 인해 건너뜀")
     except Exception as e:
@@ -180,6 +198,7 @@ for i, ((font_size, color, bg_color), group) in enumerate(style_groups.items()):
     for el, idx, text, is_button, has_icon, width, height in group:
         label_info = ""
         size_info = ""
+        display_text = text if text else "(없음)"
 
         if is_button:
             if width < 44 or height < 44:
@@ -187,14 +206,16 @@ for i, ((font_size, color, bg_color), group) in enumerate(style_groups.items()):
             else:
                 size_info = f"✅ 버튼 크기 적절 ({width:.0f}px × {height:.0f}px)"
 
-        if not text and is_button and has_icon:
-            label = el.get_attribute("aria-label") or el.get_attribute("title")
-            if not label:
-                label_info = "⚠️ 대체 텍스트 없음"
-            else:
-                label_info = f"대체 텍스트: `{label}`"
+            if not text:#text 값 확인
+                if has_icon: #el의 자식 중 <svg>, <img>, <i> 등의 요소 탐색
+                    label = el.get_attribute("aria-label") or el.get_attribute("title")
+                    if not label:
+                        label_info = "⚠️ 텍스트 없음 + 대체 텍스트 없음"
+                    else:
+                        label_info = f"⚠️ 텍스트 없음 → 대체 텍스트: `{label}`"
+                else:
+                    label_info = "⚠️ 텍스트도 아이콘도 없음"
 
-        display_text = text if text else "(없음)"
         markdown_output.append(f"  - `[{idx}]` 텍스트: **{display_text}** {label_info} {size_info}")
 
     markdown_output.append("")  # 줄바꿈
