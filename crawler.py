@@ -69,7 +69,15 @@ def has_text_child(el):
         if child.text.strip():
             return True
     return False
-
+#버튼 기준설정
+def is_button_like(el):
+    tag_name = el.tag_name.lower()
+    role = el.get_attribute("role")
+    return (
+        tag_name == "button" or
+        role == "button" or
+        el.get_attribute("onclick") is not None
+    )
 # 기준 설정
 min_contrast = 4.5
 min_font_size_px = 12
@@ -84,7 +92,9 @@ for idx, el in enumerate(elements):
     try:
         text = el.text.strip()
         tag_name = el.tag_name.lower()
-        is_button = tag_name == "button"
+        #버튼이라고 정의할 수 있는방식이다양함 
+        role = el.get_attribute("role")
+        is_button = is_button_like(el)
 
         has_text = bool(text)
         has_icon = bool(el.find_elements(By.TAG_NAME, 'svg') or el.find_elements(By.TAG_NAME, 'img'))
@@ -92,9 +102,10 @@ for idx, el in enumerate(elements):
 
         if not has_content:
             continue  # 텍스트도 아이콘도 없으면 스킵
-        
-        if has_text_child(el):
-            continue  # 자식이 텍스트 가지면 이건 상위 요소니까 스킵
+
+        if has_text_child(el) and not is_button_like(el):
+            continue  # 진짜 상위일 때만 스킵!
+
         # 스타일 추출
         style = driver.execute_script("""
             const computed = window.getComputedStyle(arguments[0]);
@@ -113,9 +124,15 @@ for idx, el in enumerate(elements):
         if "rgba" in bg_color and bg_color.endswith(", 0)") or "transparent" in bg_color:
             bg_color = get_valid_background_color(driver, el)
 
-        # 그룹화 키 생성
+               # 요소 크기 측정
+        size = el.size
+        width = size['width']
+        height = size['height']
+
+        # 그룹화 키 생성 (기존에는 스타일만 묶었지만, 크기는 제외)
         key = (font_size, color, bg_color)
-        style_groups[key].append((el, idx, text, is_button, has_icon))
+        style_groups[key].append((el, idx, text, is_button, has_icon, width, height))
+
 
     except StaleElementReferenceException:
         print(f"❌ [{idx}] stale element로 인해 건너뜀")
@@ -144,18 +161,42 @@ for i, ((font_size, color, bg_color), group) in enumerate(style_groups.items()):
     font_px = float(font_size.replace("px", "").strip())
     if font_px < min_font_size_px:
         markdown_output.append(f"- ⚠️ 글씨 크기 작음 ({font_px}px) → 최소 {min_font_size_px}px 권장")
+    
+    # 버튼 크기 요약 정보
+    button_infos = [
+        (width, height) for el, _, _, is_button, _, width, height in group if is_button
+    ]
+    if button_infos:
+        total_buttons = len(button_infos)
+        small_buttons = sum(1 for w, h in button_infos if w < 44 or h < 44)
+        markdown_output.append(f"- **버튼 개수**: {total_buttons}개")
+        if small_buttons > 0:
+            markdown_output.append(f"  - ⚠️ {small_buttons}개 버튼이 44×44px 미만")
+        else:
+            markdown_output.append(f"  - ✅ 모든 버튼이 크기 기준 만족")
 
+    # 요소 목록 출력력        
     markdown_output.append(f"- **요소 목록**:")
-    for el, idx, text, is_button, has_icon in group:
+    for el, idx, text, is_button, has_icon, width, height in group:
         label_info = ""
+        size_info = ""
+
+        if is_button:
+            if width < 44 or height < 44:
+                size_info = f"⚠️ 버튼 크기 작음 ({width:.0f}px × {height:.0f}px)"
+            else:
+                size_info = f"✅ 버튼 크기 적절 ({width:.0f}px × {height:.0f}px)"
+
         if not text and is_button and has_icon:
             label = el.get_attribute("aria-label") or el.get_attribute("title")
             if not label:
                 label_info = "⚠️ 대체 텍스트 없음"
             else:
                 label_info = f"대체 텍스트: `{label}`"
+
         display_text = text if text else "(없음)"
-        markdown_output.append(f"  - `[{idx}]` 텍스트: **{display_text}** {label_info}")
+        markdown_output.append(f"  - `[{idx}]` 텍스트: **{display_text}** {label_info} {size_info}")
+
     markdown_output.append("")  # 줄바꿈
 
 # 마크다운 파일로 저장
