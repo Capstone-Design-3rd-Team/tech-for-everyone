@@ -1,0 +1,100 @@
+{
+  "class": "Text",
+  "confidence": 0.7047933340072632,
+  "position": [
+    250.0361328125,
+    843.8414306640625,
+    840.5089721679688,
+    923.5969848632812
+  ],
+  "text_analysis": [
+    {
+      "text": "검",
+      "confidence": 93,
+      "x": 18,
+      "y": 26,
+      "width": 274,
+      "height": 68,
+      "font_size": 68
+    },
+    {
+      "text": "색",
+      "confidence": 93,
+      "x": 112,
+      "y": 22,
+      "width": 68,
+      "height": 98,
+      "font_size": 98
+    },
+    {
+      "text": "하",
+      "confidence": 93,
+      "x": 179,
+      "y": 22,
+      "width": 68,
+      "height": 98,
+      "font_size": 98
+    },
+    {
+      "text": "여",
+      "confidence": 93,
+      "x": 246,
+      "y": 22,
+      "width": 44,
+      "height": 98,
+      "font_size": 98
+    },
+    {
+      "text": "시",
+      "confidence": 93,
+      "x": 323,
+      "y": 26,
+      "width": 274,
+      "height": 68,
+      "font_size": 68
+    },
+    {
+      "text": "작",
+      "confidence": 93,
+      "x": 412,
+      "y": 22,
+      "width": 68,
+      "height": 98,
+      "font_size": 98
+    },
+    {
+      "text": "하",
+      "confidence": 93,
+      "x": 479,
+      "y": 22,
+      "width": 68,
+      "height": 98,
+      "font_size": 98
+    },
+    {
+      "text": "기",
+      "confidence": 97,
+      "x": 546,
+      "y": 22,
+      "width": 56,
+      "height": 98,
+      "font_size": 98
+    }
+  ],
+  "contrast_analysis": {
+    "contrast_ratio": 14.256150521367877,
+    "position": [
+      15,
+      20
+    ],
+    "window_size": 10,
+    "min_value": 0,
+    "max_value": 0
+  },
+  "evaluation": {
+    "accessibility_score": 24,
+    "usability_score": 8,
+    "issues": [],
+    "recommendations": []
+  }
+}

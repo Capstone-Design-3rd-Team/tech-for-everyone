@@ -1,0 +1,20 @@
+{
+  "class": "Input Field",
+  "confidence": 0.6465327739715576,
+  "position": [
+    233.05287170410156,
+    519.4686279296875,
+    861.2486572265625,
+    621.0706787109375
+  ],
+  "contrast_analysis": {
+    "contrast_ratio": 3.0606998513865133,
+    "position": [
+      280,
+      30
+    ],
+    "window_size": 10,
+    "min_value": 0,
+    "max_value": 0
+  }
+}

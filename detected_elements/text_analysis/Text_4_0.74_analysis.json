@@ -1,0 +1,37 @@
+{
+  "class": "Text",
+  "confidence": 0.7372130751609802,
+  "position": [
+    495.9761657714844,
+    1850.335693359375,
+    591.8011474609375,
+    1881.512939453125
+  ],
+  "text_analysis": [
+    {
+      "text": "Shorts",
+      "confidence": 96,
+      "x": 18,
+      "y": 29,
+      "width": 94,
+      "height": 24,
+      "font_size": 24
+    }
+  ],
+  "contrast_analysis": {
+    "contrast_ratio": 16.97104964436329,
+    "position": [
+      35,
+      0
+    ],
+    "window_size": 10,
+    "min_value": 0,
+    "max_value": 0
+  },
+  "evaluation": {
+    "accessibility_score": 3,
+    "usability_score": 1,
+    "issues": [],
+    "recommendations": []
+  }
+}

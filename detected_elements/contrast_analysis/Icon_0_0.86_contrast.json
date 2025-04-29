@@ -1,0 +1,20 @@
+{
+  "class": "Icon",
+  "confidence": 0.8574377298355103,
+  "position": [
+    898.9716186523438,
+    519.6110229492188,
+    993.455078125,
+    613.3020629882812
+  ],
+  "contrast_analysis": {
+    "contrast_ratio": 13.225798856331128,
+    "position": [
+      60,
+      30
+    ],
+    "window_size": 10,
+    "min_value": 0,
+    "max_value": 0
+  }
+}

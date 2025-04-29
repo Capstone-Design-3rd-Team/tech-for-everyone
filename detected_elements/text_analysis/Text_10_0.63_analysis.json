@@ -1,0 +1,37 @@
+{
+  "class": "Text",
+  "confidence": 0.6316174268722534,
+  "position": [
+    837.8375854492188,
+    1859.385986328125,
+    962.0311279296875,
+    1890.9420166015625
+  ],
+  "text_analysis": [
+    {
+      "text": "내",
+      "confidence": 97,
+      "x": 17,
+      "y": 22,
+      "width": 24,
+      "height": 31,
+      "font_size": 31
+    }
+  ],
+  "contrast_analysis": {
+    "contrast_ratio": 16.97104964436329,
+    "position": [
+      70,
+      0
+    ],
+    "window_size": 10,
+    "min_value": 0,
+    "max_value": 0
+  },
+  "evaluation": {
+    "accessibility_score": 3,
+    "usability_score": 1,
+    "issues": [],
+    "recommendations": []
+  }
+}

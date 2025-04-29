@@ -1,0 +1,59 @@
+{
+  "class": "Text",
+  "confidence": 0.6606140732765198,
+  "position": [
+    263.84918212890625,
+    532.71142578125,
+    555.1942749023438,
+    588.6586303710938
+  ],
+  "text_analysis": [
+    {
+      "text": "YouTube",
+      "confidence": 93,
+      "x": 19,
+      "y": 31,
+      "width": 186,
+      "height": 35,
+      "font_size": 35
+    },
+    {
+      "text": "검",
+      "confidence": 92,
+      "x": 224,
+      "y": 25,
+      "width": 37,
+      "height": 44,
+      "font_size": 44
+    },
+    {
+      "text": "시",
+      "confidence": 95,
+      "x": 272,
+      "y": 27,
+      "width": 22,
+      "height": 22,
+      "font_size": 22
+    }
+  ],
+  "contrast_analysis": {
+    "contrast_ratio": 3.0606998513865133,
+    "position": [
+      220,
+      20
+    ],
+    "window_size": 10,
+    "min_value": 0,
+    "max_value": 0
+  },
+  "evaluation": {
+    "accessibility_score": 4,
+    "usability_score": 3,
+    "issues": [
+      "일반 텍스트(22px)의 명암 대비가 WCAG AA 기준을 만족하지 않습니다 (현재: 3.06:1)"
+    ],
+    "recommendations": [
+      "일반 텍스트의 명암 대비를 4.5:1 이상으로 개선하세요"
+    ]
+  }
+}
